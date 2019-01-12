@@ -33,7 +33,7 @@ type (
 		SkuName         string             `json:"skuName"`         // 门票 成人票	SKU名称
 		TotalPrice      string             `json:"totalPrice"`      // 订单原始金额
 		PaymentFee      string             `json:"paymentFee"`      // 用户实际支付金额
-		Items           []*MFWOrderItem    `json:"items"`           // 订单购买项详细信息
+		Items           []*MFWBookingItem  `json:"items"`           // 订单购买项详细信息
 		PromotionDetail MFWPromotionDetail `json:"promotionDetail"` // 订单优惠信息
 		Skus            []*MFWSku          `json:"skus"`            // 库存信息
 	}
