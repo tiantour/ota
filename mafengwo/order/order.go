@@ -94,13 +94,13 @@ type (
 
 // Order order
 type Order struct {
-	OrderID   string        `json:"order_id,omitemtpy"`   // 订单号
-	Status    int32         `json:"status,omitemtpy"`     // 订单状态值（已联系用户并确认库存(12)，已发确认单(13)）
-	AddStatus int32         `json:"add_status,omitemtpy"` // 签证订单的子状态值(默认(0),已快递(1),已自取(2),已发邮件(3),已完成预约(4),已拒签(5))
-	Memo      string        `json:"memo,omitemtpy"`       // 订单状态的备注信息。该备注对用户可见，请谨慎填写，并有300个字符的限制
-	PageNo    int32         `json:"page_no,omitempty"`    // 当前页数
-	PageSize  int32         `json:"page_size,omitempty"`  // 单页条数（最大值20）
-	Params    MFWOrderParam `json:"params,omitempty"`     // 拓展参数
+	OrderID   string         `json:"order_id,omitemtpy"`   // 订单号
+	Status    int32          `json:"status,omitemtpy"`     // 订单状态值（已联系用户并确认库存(12)，已发确认单(13)）
+	AddStatus int32          `json:"add_status,omitemtpy"` // 签证订单的子状态值(默认(0),已快递(1),已自取(2),已发邮件(3),已完成预约(4),已拒签(5))
+	Memo      string         `json:"memo,omitemtpy"`       // 订单状态的备注信息。该备注对用户可见，请谨慎填写，并有300个字符的限制
+	PageNo    int32          `json:"page_no,omitempty"`    // 当前页数
+	PageSize  int32          `json:"page_size,omitempty"`  // 单页条数（最大值20）
+	Params    *MFWOrderParam `json:"params,omitempty"`     // 拓展参数
 }
 
 // NewOrder new order
@@ -109,11 +109,14 @@ func NewOrder() *Order {
 }
 
 // List get order lst
-func (o *Order) List(page, size int32) (*MFWOrderList, error) {
+func (o *Order) List(schedule, page, size int32) (*MFWOrderList, error) {
 	action := "sales.order.list.get"
 	data, err := json.Marshal(&Order{
 		PageNo:   page,
 		PageSize: size,
+		Params: &MFWOrderParam{
+			OrderStatus: schedule,
+		},
 	})
 	if err != nil {
 		return nil, err
