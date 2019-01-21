@@ -20,6 +20,7 @@ type Deals struct {
 	ErrNo   int32                  `json:"errno"`
 	Message string                 `json:"message"`
 	Data    map[string]interface{} `json:"data"`
+	Error   string                 `json:"error"`
 }
 
 // NewDeals new deals
@@ -72,6 +73,17 @@ func (d *Deals) Fetch(action string, data []byte) ([]byte, error) {
 		return nil, err
 	}
 
+	result := Deals{}
+	if len(body) < 100 {
+		err = json.Unmarshal(body, &result)
+		if err != nil {
+			return nil, err
+		}
+		if result.Error != "" {
+			return nil, errors.New(result.Error)
+		}
+	}
+
 	body, err = rsae.NewBase64().Decode(string(body))
 	if err != nil {
 		return nil, err
@@ -81,7 +93,6 @@ func (d *Deals) Fetch(action string, data []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	result := Deals{}
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
