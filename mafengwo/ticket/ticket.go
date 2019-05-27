@@ -1,3 +1,0 @@
-package ticket
-
-// todo

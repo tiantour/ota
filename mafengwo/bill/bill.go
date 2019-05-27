@@ -35,9 +35,9 @@ type (
 
 // Bill bill
 type Bill struct {
-	SettleStatus int32 `json:"settle_status"` // 0:未开放 1:可结算
-	PageNo       int32 `json:"page_no"`       // 页码
-	PageSize     int32 `json:"page_size"`     // 单页条数（最大值1000）
+	SettleStatus int32 `json:"settle_status,omitempty"` // 0:未开放 1:可结算
+	PageNo       int32 `json:"page_no,omitempty"`       // 页码
+	PageSize     int32 `json:"page_size,omitempty"`     // 单页条数（最大值1000）
 }
 
 // NewBill new bill

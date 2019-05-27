@@ -32,11 +32,11 @@ type (
 
 // Ticket ticket
 type Ticket struct {
-	PartnerOrderID string        `json:"partner_order_id"` // 商家编号
-	SalesID        string        `json:"sales_id"`         // 产品ID
-	Date           string        `json:"date"`             // 入园时间
-	Mobile         string        `json:"mobile"`           // 预定人手机号
-	TicketList     MFWTicketList `json:"ticket_list"`      // 票务预定信息列表
+	PartnerOrderID string        `json:"partner_order_id,omitempty"` // 商家编号
+	SalesID        string        `json:"sales_id,omitempty"`         // 产品ID
+	Date           string        `json:"date,omitempty"`             // 入园时间
+	Mobile         string        `json:"mobile,omitempty"`           // 预定人手机号
+	TicketList     MFWTicketList `json:"ticket_list,omitempty"`      // 票务预定信息列表
 }
 
 // NewTicket new ticket
@@ -46,7 +46,7 @@ func NewTicket() *Ticket {
 
 // Order ticket order create
 func (t *Ticket) Order(args *Ticket) (*MFWTicketData, error) {
-	action := "action：sales.distribution.ticket.order.create"
+	action := "sales.distribution.ticket.order.create"
 	data, err := json.Marshal(args)
 	if err != nil {
 		return nil, err
