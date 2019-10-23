@@ -74,7 +74,7 @@ func (d *Deals) Fetch(action string, data []byte) ([]byte, error) {
 	}
 
 	result := Deals{}
-	if len(body) < 100 {
+	if len(body) < 88 {
 		err = json.Unmarshal(body, &result)
 		if err != nil {
 			return nil, err
