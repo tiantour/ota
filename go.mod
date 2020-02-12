@@ -1,6 +1,6 @@
-module github.com/tiantour/ota/mafengwo
+module github.com/tiantour/ota
 
-go 1.12
+go 1.13
 
 require (
 	github.com/tiantour/fetch v1.0.0
