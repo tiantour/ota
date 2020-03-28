@@ -22,7 +22,7 @@ func NewOauth2() *Oauth2 {
 // Token get access token
 func (o *Oauth2) Token() (*Oauth2, error) {
 	path := fmt.Sprintf("https://openapi.mafengwo.cn/oauth2/token?grant_type=client_credentials&client_id=%d&client_secret=%s", ClientID, ClientSecret)
-	body, err := fetch.Cmd(fetch.Request{
+	body, err := fetch.Cmd(&fetch.Request{
 		Method: "GET",
 		URL:    path,
 	})

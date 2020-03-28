@@ -60,7 +60,7 @@ func (d *Deals) Fetch(action string, data []byte) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	body, err = fetch.Cmd(fetch.Request{
+	body, err = fetch.Cmd(&fetch.Request{
 		Method: "POST",
 		URL:    "https://openapi.mafengwo.cn/deals/rest",
 		Body:   body,
