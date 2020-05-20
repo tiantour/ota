@@ -35,6 +35,7 @@ type (
 		PaymentFee      string             `json:"paymentFee"`      // 用户实际支付金额
 		Items           []*MFWBookingItem  `json:"items"`           // 订单购买项详细信息
 		PromotionDetail MFWPromotionDetail `json:"promotionDetail"` // 订单优惠信息
+		TravelPeople    MFWTravelPeople    `json:"travel_people"`   // 出行人信息
 		Skus            []*MFWSku          `json:"skus"`            // 库存信息
 	}
 	// MFWOrderStatus order static

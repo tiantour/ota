@@ -1,5 +1,7 @@
 github.com/tiantour/fetch v1.0.3 h1:mEe889Scc+XT7m9I8SyeACfTDGggqKESUgQtg1Q1cQs=
 github.com/tiantour/fetch v1.0.3/go.mod h1:5oOFK9vdQPGe7AWAajWl6j1yWNju/HAuLmENMv/0U6c=
+github.com/tiantour/fetch v1.0.5 h1:8oOiyPe7yUTHftrdhNZpGqy+8D5oDTizycR7u4HWtdo=
+github.com/tiantour/fetch v1.0.5/go.mod h1:58RbZIoag2/oVkHqSB00D2cyzYPVMGUgBPGGpH22SwA=
 github.com/tiantour/imago v1.0.0 h1:+C4MLAInXMjDGqk19UzOVbDYZHWP0d1YkGAxBR864yg=
 github.com/tiantour/imago v1.0.0/go.mod h1:MNnDnzf12C+kzGFcpdtmOpnqmvOZJprm5lgvCE8XMh0=
 github.com/tiantour/rsae v1.0.3 h1:K6lhiIF+yL1UvAhW19Vt4rCVSvVi2ABCXfGtJ47LWiY=
