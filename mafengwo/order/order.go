@@ -9,35 +9,38 @@ import (
 type (
 	// MFWOrderList order list
 	MFWOrderList struct {
-		Total int32           `json:"total"`
 		List  []*MFWOrderItem `json:"list"`
+		Total int32           `json:"total"`
 	}
 
 	// MFWOrderItem order item
 	MFWOrderItem struct {
-		OrderID         string             `json:"orderId"`         // 订单号
-		Status          MFWOrderStatus     `json:"status"`          // 订单状态
-		GoDate          string             `json:"goDate"`          // 旅行出行日期
-		EndDate         string             `json:"endDate"`         // 旅行结束日期
-		Paytime         string             `json:"payTime"`         // 订单支付时间
-		Ctime           string             `json:"ctime"`           // 订单创建时间
-		BookingPeople   MFWBookingPeople   `json:"bookingPeople"`   // 预订人信息
-		SalesID         int32              `json:"salesId"`         // 马蜂窝产品id，产品唯一标识
-		SalesName       string             `json:"salesName"`       // 大熊猫研究基地门票	产品名称
-		OtaSalesName    string             `json:"otaSalesName"`    // 商家设置的产品外部编码
-		SalesType       int32              `json:"salesType"`       // 具体说明请见 马蜂窝品类说明表
-		Mdd             string             `json:"mdd"`             // 目的地
-		From            string             `json:"from"`            // 订单关联产品出发地
-		SkuID           int32              `json:"skuId"`           // 马蜂窝SKU ID，SKU唯一标识
-		OtaSkuID        string             `json:"otaSkuId"`        // 商家设置的SKU外部编码
-		SkuName         string             `json:"skuName"`         // 门票 成人票	SKU名称
-		TotalPrice      string             `json:"totalPrice"`      // 订单原始金额
-		PaymentFee      string             `json:"paymentFee"`      // 用户实际支付金额
-		Items           []*MFWBookingItem  `json:"items"`           // 订单购买项详细信息
-		PromotionDetail MFWPromotionDetail `json:"promotionDetail"` // 订单优惠信息
-		TravelPeople    MFWTravelPeople    `json:"travel_people"`   // 出行人信息
-		Skus            []*MFWSku          `json:"skus"`            // 库存信息
+		OrderID         string              `json:"orderId"`         // 订单号
+		Status          *MFWOrderStatus     `json:"status"`          // 订单状态
+		GoDate          string              `json:"goDate"`          // 旅行出行日期
+		EndDate         string              `json:"endDate"`         // 旅行结束日期
+		Paytime         string              `json:"payTime"`         // 订单支付时间
+		Ctime           string              `json:"ctime"`           // 订单创建时间
+		BookingPeople   *MFWBookingPeople   `json:"bookingPeople"`   // 预订人信息
+		SalesID         int32               `json:"salesId"`         // 马蜂窝产品id，产品唯一标识
+		SalesName       string              `json:"salesName"`       // 产品名称
+		OtaSalesName    string              `json:"otaSalesName"`    // 商家设置的产品外部编码
+		SalesType       int32               `json:"salesType"`       // 具体说明请见 马蜂窝品类说明表
+		Mdd             string              `json:"mdd"`             // 目的地
+		From            string              `json:"from"`            // 订单关联产品出发地
+		SkuID           int32               `json:"skuId"`           // 马蜂窝SKU ID，SKU唯一标识
+		OtaSkuID        string              `json:"otaSkuId"`        // 商家设置的SKU外部编码
+		SkuName         string              `json:"skuName"`         // 门票 成人票	SKU名称
+		TotalPrice      string              `json:"totalPrice"`      // 订单原始金额
+		PaymentFee      string              `json:"paymentFee"`      // 用户实际支付金额
+		Items           []*MFWBookingItem   `json:"items"`           // 订单购买项详细信息
+		PromotionDetail *MFWPromotionDetail `json:"promotionDetail"` // 订单优惠信息
+		TravelPeople    *MFWTravelPeople    `json:"travel_people"`   // 出行人信息
+		Skus            []*MFWSku           `json:"skus"`            // 库存信息
+		ConfirmInfo     *MFWConfirmInfo     `json:"confirmInfo"`     // 确认方式信息
+		IssueInfo       *MFWIssueInfo       `json:"issueInfo"`       // 出单方式信息
 	}
+
 	// MFWOrderStatus order static
 	MFWOrderStatus struct {
 		OrderStatus   int32 `json:"orderStatus"`   // 订单状态：1-待支付，2-待出单，4-已出单，5-已完成，6-已关闭
@@ -83,6 +86,18 @@ type (
 		SkuID     int32  `json:"skuId"`     // 马蜂窝SKU ID，SKU唯一标识
 	}
 
+	// MFWConfirmInfo confirmInfo
+	MFWConfirmInfo struct {
+		Type     int32  `json:"type"`      // 确认方式：0-普通确认，1-即时确认，2-二次确认
+		OverTime string `json:"over_time"` // 类型为二次确认时，需进行确认的时限
+	}
+
+	// MFWIssueInfo issueInfo
+	MFWIssueInfo struct {
+		Type int32  `json:"type"` // 出单方式：1-商家出单，2-自动出单
+		Days string `json:"days"` // 出单期限天数，0表示不限制
+	}
+
 	// MFWOrderParam order param
 	MFWOrderParam struct {
 		TimeFrom    string `json:"time_from,omitempty"`    // 用户下单起始时间
@@ -111,7 +126,6 @@ func NewOrder() *Order {
 
 // List get order lst
 func (o *Order) List(schedule, page, size int32) (*MFWOrderList, error) {
-	action := "sales.order.list.get"
 	data, err := json.Marshal(&Order{
 		PageNo:   page,
 		PageSize: size,
@@ -122,28 +136,33 @@ func (o *Order) List(schedule, page, size int32) (*MFWOrderList, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	action := "sales.order.list.get"
 	body, err := mafengwo.NewDeals().Fetch(action, data)
 	if err != nil {
 		return nil, err
 	}
+
 	result := MFWOrderList{}
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
 
-// Item item
+// Item get order item
 func (o *Order) Item(orderID string) (*MFWOrderItem, error) {
-	action := "sales.order.detail.get"
 	data, err := json.Marshal(&Order{
 		OrderID: orderID,
 	})
 	if err != nil {
 		return nil, err
 	}
+
+	action := "sales.order.detail.get"
 	body, err := mafengwo.NewDeals().Fetch(action, data)
 	if err != nil {
 		return nil, err
 	}
+
 	result := MFWOrderItem{}
 	err = json.Unmarshal(body, &result)
 	return &result, err
@@ -151,15 +170,17 @@ func (o *Order) Item(orderID string) (*MFWOrderItem, error) {
 
 // Update update status
 func (o *Order) Update(args *Order) (*Order, error) {
-	action := "sales.order.status.update"
 	data, err := json.Marshal(args)
 	if err != nil {
 		return nil, err
 	}
+
+	action := "sales.order.status.update"
 	body, err := mafengwo.NewDeals().Fetch(action, data)
 	if err != nil {
 		return nil, err
 	}
+
 	result := Order{}
 	err = json.Unmarshal(body, &result)
 	return &result, err

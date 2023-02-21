@@ -9,8 +9,8 @@ import (
 type (
 	// MFWCommentList comment list
 	MFWCommentList struct {
+		List  []*MFWCommentItem `json:"list"`  // 点评信息列表
 		Total int32             `json:"total"` // 点评数量
-		List  []*MFWCommentItem // 点评信息列表
 	}
 	// MFWCommentItem comment item
 	MFWCommentItem struct {
@@ -72,15 +72,17 @@ func NewComment() *Comment {
 
 // List get comment list
 func (c *Comment) List(args *Comment) (*MFWCommentList, error) {
-	action := "sales.order.comment.list.get"
 	data, err := json.Marshal(args)
 	if err != nil {
 		return nil, err
 	}
+
+	action := "sales.order.comment.list.get"
 	body, err := mafengwo.NewDeals().Fetch(action, data)
 	if err != nil {
 		return nil, err
 	}
+
 	result := MFWCommentList{}
 	err = json.Unmarshal(body, &result)
 	return &result, err
@@ -88,15 +90,17 @@ func (c *Comment) List(args *Comment) (*MFWCommentList, error) {
 
 // Reply set comment reply
 func (c *Comment) Reply(args *Comment) (*Comment, error) {
-	action := "sales.order.comment.reply"
 	data, err := json.Marshal(args)
 	if err != nil {
 		return nil, err
 	}
+
+	action := "sales.order.comment.reply"
 	body, err := mafengwo.NewDeals().Fetch(action, data)
 	if err != nil {
 		return nil, err
 	}
+
 	result := Comment{}
 	err = json.Unmarshal(body, &result)
 	return &result, err

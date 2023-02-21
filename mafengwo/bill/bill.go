@@ -15,7 +15,7 @@ type (
 	// MFWBillItem bill item
 	MFWBillItem struct {
 		DetailID           int32   `json:"detail_id"`            // 交易号
-		OrderID            string  `json:"order_id"`             // 	旅行商城业务订单号
+		OrderID            string  `json:"order_id"`             // 旅行商城业务订单号
 		SalesAmount        float64 `json:"sales_amount"`         // 销售金额
 		CommisionRate      float64 `json:"commision_rate"`       // 佣金比例
 		CommisionAmount    float64 `json:"commision_amount"`     // 金/手续费

@@ -30,17 +30,19 @@ func NewMemo() *Memo {
 
 // Item get memo item
 func (m *Memo) Item(orderID string) (*MFWMemoItem, error) {
-	action := "sales.order.memo.get"
 	data, err := json.Marshal(&Memo{
 		OrderID: orderID,
 	})
 	if err != nil {
 		return nil, err
 	}
+
+	action := "sales.order.memo.get"
 	body, err := mafengwo.NewDeals().Fetch(action, data)
 	if err != nil {
 		return nil, err
 	}
+
 	result := MFWMemoItem{}
 	err = json.Unmarshal(body, &result)
 	return &result, err
@@ -48,15 +50,17 @@ func (m *Memo) Item(orderID string) (*MFWMemoItem, error) {
 
 // Add add memo
 func (m *Memo) Add(args *Memo) (*Memo, error) {
-	action := "sales.order.memo.add"
 	data, err := json.Marshal(args)
 	if err != nil {
 		return nil, err
 	}
+
+	action := "sales.order.memo.add"
 	body, err := mafengwo.NewDeals().Fetch(action, data)
 	if err != nil {
 		return nil, err
 	}
+
 	result := Memo{}
 	err = json.Unmarshal(body, &result)
 	return &result, err

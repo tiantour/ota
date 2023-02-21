@@ -9,8 +9,8 @@ import (
 type (
 	// MFWProductList product list
 	MFWProductList struct {
-		Total int32             `json:"total"`
 		List  []*MFWProductItem `json:"list"`
+		Total int32             `json:"total"`
 	}
 
 	// MFWProductItem product item
@@ -48,7 +48,6 @@ func NewProduct() *Product {
 
 // List get product list
 func (p *Product) List(page, size int32) (*MFWProductList, error) {
-	action := "sales.product.list.get"
 	data, err := json.Marshal(&Product{
 		PageNo:   page,
 		PageSize: size,
@@ -56,10 +55,13 @@ func (p *Product) List(page, size int32) (*MFWProductList, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	action := "sales.product.list.get"
 	body, err := mafengwo.NewDeals().Fetch(action, data)
 	if err != nil {
 		return nil, err
 	}
+
 	result := MFWProductList{}
 	err = json.Unmarshal(body, &result)
 	return &result, err
@@ -67,17 +69,19 @@ func (p *Product) List(page, size int32) (*MFWProductList, error) {
 
 // Item get product item
 func (p *Product) Item(salesID int32) (*MFWProductItem, error) {
-	action := "sales.product.detail.get"
 	data, err := json.Marshal(&Product{
 		SalesID: salesID,
 	})
 	if err != nil {
 		return nil, err
 	}
+
+	action := "sales.product.detail.get"
 	body, err := mafengwo.NewDeals().Fetch(action, data)
 	if err != nil {
 		return nil, err
 	}
+
 	result := MFWProductItem{}
 	err = json.Unmarshal(body, &result)
 	return &result, err

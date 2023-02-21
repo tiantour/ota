@@ -10,15 +10,15 @@ type (
 
 	// MFWTravelerItem traveler data
 	MFWTravelerItem struct {
-		OrderID      string          `json:"order_id"`      // 订单号
-		TravelPeople MFWTravelPeople `json:"travel_people"` // 出行人信息
+		OrderID      string           `json:"order_id"`      // 订单号
+		TravelPeople *MFWTravelPeople `json:"travel_people"` // 出行人信息
 	}
 	// MFWTravelPeople traveler people
 	MFWTravelPeople struct {
 		Traveler  []*MFWTraveler `json:"traveler"`   // 出行人信息
-		Trip      MFWTrip        `json:"trip"`       // 出行信息
-		TsAddress MFWTsAddress   `json:"ts_address"` // 取还地址
-		Address   MFWAddress     `json:"address"`    // 地址信息
+		Trip      *MFWTrip       `json:"trip"`       // 出行信息
+		TsAddress *MFWTsAddress  `json:"ts_address"` // 取还地址
+		Address   *MFWAddress    `json:"address"`    // 地址信息
 	}
 	// MFWTraveler traveler
 	MFWTraveler struct {
@@ -123,16 +123,16 @@ type (
 	}
 	// MFWTravelerParam traveler param
 	MFWTravelerParam struct {
-		OrderID string          `json:"order_id"` // 订单号
-		Params  MFWTravelPeople `json:"params"`   // 出行人信息
+		OrderID string           `json:"order_id"` // 订单号
+		Params  *MFWTravelPeople `json:"params"`   // 出行人信息
 	}
 )
 
 // Traveler traveler
 type Traveler struct {
-	OrderID    string           `json:"order_id"`    // 订单号
-	TravelerID int32            `json:"traveler_id"` // 出行人ID
-	Params     MFWTravelerParam `json:"params"`      // 出行人信息
+	OrderID    string            `json:"order_id"`    // 订单号
+	TravelerID int32             `json:"traveler_id"` // 出行人ID
+	Params     *MFWTravelerParam `json:"params"`      // 出行人信息
 }
 
 // NewTraveler new traveler
@@ -142,17 +142,19 @@ func NewTraveler() *Traveler {
 
 // List get traveler list
 func (t *Traveler) List(orderID string) (*MFWTravelerItem, error) {
-	action := "sales.order.traveler.get"
 	data, err := json.Marshal(&Traveler{
 		OrderID: orderID,
 	})
 	if err != nil {
 		return nil, err
 	}
+
+	action := "sales.order.traveler.get"
 	body, err := mafengwo.NewDeals().Fetch(action, data)
 	if err != nil {
 		return nil, err
 	}
+
 	result := MFWTravelerItem{}
 	err = json.Unmarshal(body, &result)
 	return &result, err
@@ -160,15 +162,17 @@ func (t *Traveler) List(orderID string) (*MFWTravelerItem, error) {
 
 // Update update traveler
 func (t *Traveler) Update(args *Traveler) (*Traveler, error) {
-	action := "sales.order.traveler.update"
 	data, err := json.Marshal(args)
 	if err != nil {
 		return nil, err
 	}
+
+	action := "sales.order.traveler.update"
 	body, err := mafengwo.NewDeals().Fetch(action, data)
 	if err != nil {
 		return nil, err
 	}
+
 	result := Traveler{}
 	err = json.Unmarshal(body, &result)
 	return &result, err

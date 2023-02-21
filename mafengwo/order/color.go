@@ -17,17 +17,39 @@ func NewColor() *Color {
 	return &Color{}
 }
 
-// Add add color
-func (c *Color) Add(args *Color) (*Color, error) {
-	action := "sales.order.color.add"
-	data, err := json.Marshal(args)
+// Item get color item
+func (c *Color) Item(orderID string) (*Color, error) {
+	data, err := json.Marshal(&Color{
+		OrderID: orderID,
+	})
 	if err != nil {
 		return nil, err
 	}
+
+	action := "sales.order.color.get"
 	body, err := mafengwo.NewDeals().Fetch(action, data)
 	if err != nil {
 		return nil, err
 	}
+
+	result := Color{}
+	err = json.Unmarshal(body, &result)
+	return &result, err
+}
+
+// Add add color
+func (c *Color) Add(args *Color) (*Color, error) {
+	data, err := json.Marshal(args)
+	if err != nil {
+		return nil, err
+	}
+
+	action := "sales.order.color.add"
+	body, err := mafengwo.NewDeals().Fetch(action, data)
+	if err != nil {
+		return nil, err
+	}
+
 	result := Color{}
 	err = json.Unmarshal(body, &result)
 	return &result, err
