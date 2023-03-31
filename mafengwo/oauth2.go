@@ -1,10 +1,9 @@
 package mafengwo
 
 import (
-	"encoding/json"
 	"fmt"
 
-	"github.com/tiantour/fetch"
+	"github.com/duke-git/lancet/v2/netutil"
 )
 
 // Oauth2 oauth2
@@ -21,13 +20,20 @@ func NewOauth2() *Oauth2 {
 
 // Token get access token
 func (o *Oauth2) Token() (*Oauth2, error) {
-	path := fmt.Sprintf("https://openapi.mafengwo.cn/oauth2/token?grant_type=client_credentials&client_id=%d&client_secret=%s", ClientID, ClientSecret)
-	body, err := fetch.Cmd(&fetch.Request{
+	client := netutil.NewHttpClient()
+	resp, err := client.SendRequest(&netutil.HttpRequest{
+		RawURL: fmt.Sprintf("https://openapi.mafengwo.cn/oauth2/token?grant_type=client_credentials&client_id=%d&client_secret=%s", ClientID, ClientSecret),
 		Method: "GET",
-		URL:    path,
 	})
 	if err != nil {
 		return nil, err
 	}
-	return o, json.Unmarshal(body, o)
+
+	result := Oauth2{}
+	err = client.DecodeResponse(resp, &result)
+	if err != nil {
+		return nil, err
+	}
+
+	return &result, nil
 }

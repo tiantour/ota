@@ -5,14 +5,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"mime/multipart"
 	"net/http"
 
-	"github.com/tiantour/fetch"
-	"github.com/tiantour/imago"
-	"github.com/tiantour/rsae"
-	"github.com/tiantour/tempo"
+	"github.com/duke-git/lancet/v2/cryptor"
+	"github.com/duke-git/lancet/v2/datetime"
+	"github.com/duke-git/lancet/v2/netutil"
+	"github.com/duke-git/lancet/v2/random"
 )
 
 // Deals deals
@@ -31,18 +31,13 @@ func NewDeals() *Deals {
 // Fetch fetch rest
 func (d *Deals) Fetch(action string, data []byte) ([]byte, error) {
 	key := []byte(AseKey)
-	iv := []byte(AseKey)[:16]
+	body := cryptor.AesCbcEncrypt(data, key)
+	base64Data := cryptor.Base64StdEncode(string(body))
 
-	aesData, err := rsae.NewAES().Encrypt(data, key, iv)
-	if err != nil {
-		return nil, err
-	}
-	base64Data := rsae.NewBase64().Encode(aesData)
-
-	timestamp := tempo.NewNow().Unix()
-	nonce := imago.NewRandom().Text(16)
+	timestamp := datetime.NewUnixNow().ToUnix()
+	nonce := random.RandString(16)
 	sign := fmt.Sprintf("%d%s%d%s%s%s", PartnerID, action, timestamp, AseKey, nonce, base64Data)
-	sign = rsae.NewMD5().Encode(sign)
+	sign = cryptor.Md5String(sign)
 
 	b := &bytes.Buffer{}
 	w := multipart.NewWriter(b)
@@ -56,15 +51,17 @@ func (d *Deals) Fetch(action string, data []byte) ([]byte, error) {
 	w.WriteField("file_data", "")
 	w.Close()
 
-	body, err := ioutil.ReadAll(b)
+	body, err := io.ReadAll(b)
 	if err != nil {
 		return nil, err
 	}
-	body, err = fetch.Cmd(&fetch.Request{
+
+	client := netutil.NewHttpClient()
+	resp, err := client.SendRequest(&netutil.HttpRequest{
+		RawURL: "https://openapi.mafengwo.cn/deals/rest",
 		Method: "POST",
-		URL:    "https://openapi.mafengwo.cn/deals/rest",
 		Body:   body,
-		Header: http.Header{
+		Headers: http.Header{
 			"User-Agent":   []string{"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.67 Safari/537.36"},
 			"Content-Type": []string{w.FormDataContentType()},
 		},
@@ -73,30 +70,31 @@ func (d *Deals) Fetch(action string, data []byte) ([]byte, error) {
 		return nil, err
 	}
 
+	body, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
 	result := Deals{}
 	if len(body) < 88 {
-		err = json.Unmarshal(body, &result)
+		err = client.DecodeResponse(resp, &result)
 		if err != nil {
 			return nil, err
 		}
+
 		if result.Error != "" {
 			return nil, errors.New(result.Error)
 		}
 	}
 
-	body, err = rsae.NewBase64().Decode(string(body))
-	if err != nil {
-		return nil, err
-	}
-	body, err = rsae.NewAES().Decrypt(body, key, iv)
-	if err != nil {
-		return nil, err
-	}
+	base64Data = cryptor.Base64StdDecode(string(body))
+	body = cryptor.AesCbcDecrypt([]byte(base64Data), key)
 
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
 	}
+
 	if result.ErrNo != 1000 {
 		return nil, errors.New(result.Message)
 	}
