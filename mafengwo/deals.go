@@ -13,6 +13,7 @@ import (
 	"github.com/duke-git/lancet/v2/datetime"
 	"github.com/duke-git/lancet/v2/netutil"
 	"github.com/duke-git/lancet/v2/random"
+	"github.com/tiantour/rsae"
 )
 
 // Deals deals
@@ -31,7 +32,11 @@ func NewDeals() *Deals {
 // Fetch fetch rest
 func (d *Deals) Fetch(action string, data []byte) ([]byte, error) {
 	key := []byte(AseKey)
-	body := cryptor.AesCbcEncrypt(data, key)
+
+	body, err := rsae.NewAES().Encrypt(data, key, key[:16])
+	if err != nil {
+		return nil, err
+	}
 	base64Data := cryptor.Base64StdEncode(string(body))
 
 	timestamp := datetime.NewUnixNow().ToUnix()
@@ -51,7 +56,7 @@ func (d *Deals) Fetch(action string, data []byte) ([]byte, error) {
 	w.WriteField("file_data", "")
 	w.Close()
 
-	body, err := io.ReadAll(b)
+	body, err = io.ReadAll(b)
 	if err != nil {
 		return nil, err
 	}
@@ -66,32 +71,35 @@ func (d *Deals) Fetch(action string, data []byte) ([]byte, error) {
 			"Content-Type": []string{w.FormDataContentType()},
 		},
 	})
+	fmt.Println(111, resp, err)
 	if err != nil {
 		return nil, err
 	}
 
 	body, err = io.ReadAll(resp.Body)
+	fmt.Println(222, string(body), err)
 	if err != nil {
 		return nil, err
 	}
 
 	base64Data = cryptor.Base64StdDecode(string(body))
 	body = cryptor.AesCbcDecrypt([]byte(base64Data), key)
+	fmt.Println(333, string(body), err)
 
 	result := Deals{}
-	if len(body) < 88 {
-		err = json.Unmarshal(body, &result)
-		if err != nil {
-			return nil, err
-		}
+	err = json.Unmarshal([]byte("{\""+string(body)), &result)
+	fmt.Println(44, string(body), err)
+	if err != nil {
+		return nil, err
+	}
 
-		if result.Error != "" {
-			return nil, errors.New(result.Error)
-		}
+	if result.Error != "" {
+		return nil, errors.New(result.Error)
 	}
 
 	if result.ErrNo != 1000 {
 		return nil, errors.New(result.Message)
 	}
-	return json.Marshal(result.Data)
+	// return json.Marshal(result.Data)
+	return []byte{}, nil
 }
