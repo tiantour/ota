@@ -75,6 +75,9 @@ func (d *Deals) Fetch(action string, data []byte) ([]byte, error) {
 		return nil, err
 	}
 
+	base64Data = cryptor.Base64StdDecode(string(body))
+	body = cryptor.AesCbcDecrypt([]byte(base64Data), key)
+
 	result := Deals{}
 	if len(body) < 88 {
 		err = client.DecodeResponse(resp, &result)
@@ -85,14 +88,6 @@ func (d *Deals) Fetch(action string, data []byte) ([]byte, error) {
 		if result.Error != "" {
 			return nil, errors.New(result.Error)
 		}
-	}
-
-	base64Data = cryptor.Base64StdDecode(string(body))
-	body = cryptor.AesCbcDecrypt([]byte(base64Data), key)
-
-	err = json.Unmarshal(body, &result)
-	if err != nil {
-		return nil, err
 	}
 
 	if result.ErrNo != 1000 {
