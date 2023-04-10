@@ -8,20 +8,20 @@ import (
 
 type (
 
-	// MFWTravelerItem traveler data
-	MFWTravelerItem struct {
-		OrderID      string           `json:"order_id"`      // 订单号
-		TravelPeople *MFWTravelPeople `json:"travel_people"` // 出行人信息
+	// TravelerItem traveler data
+	TravelerItem struct {
+		OrderID      string        `json:"order_id"`      // 订单号
+		TravelPeople *TravelPeople `json:"travel_people"` // 出行人信息
 	}
-	// MFWTravelPeople traveler people
-	MFWTravelPeople struct {
-		Traveler  []*MFWTraveler `json:"traveler"`   // 出行人信息
-		Trip      *MFWTrip       `json:"trip"`       // 出行信息
-		TsAddress *MFWTsAddress  `json:"ts_address"` // 取还地址
-		Address   *MFWAddress    `json:"address"`    // 地址信息
+	// TravelPeople traveler people
+	TravelPeople struct {
+		Traveler  []*Travelerx `json:"traveler"`   // 出行人信息
+		Trip      *Trip        `json:"trip"`       // 出行信息
+		TsAddress *TsAddress   `json:"ts_address"` // 取还地址
+		Address   *Address     `json:"address"`    // 地址信息
 	}
-	// MFWTraveler traveler
-	MFWTraveler struct {
+	// Traveler traveler
+	Travelerx struct {
 		Name            string `json:"name"`              // 出行人姓名
 		IDType          string `json:"id_type"`           // 证件类型 如：当 id_type = 身份证；会返回id_card 目前会返回的类型：身份证/护照/港澳通行证/台湾通行证
 		Birthday        string `json:"birthday"`          // 出生年月日
@@ -43,8 +43,8 @@ type (
 		IDCard          string `json:"id_card"`           // 身份证号码
 		FirstName       string `json:"first_name"`        // 名（拼音）
 	}
-	// MFWTrip trip
-	MFWTrip struct {
+	// Trip trip
+	Trip struct {
 		PickUpTime            string `json:"pick_up_time"`              // 接人时间
 		PickUpPlace           string `json:"pick_up_place"`             // 接人地点
 		SendTo                string `json:"send_to"`                   // 送达地点
@@ -110,29 +110,29 @@ type (
 		MealTime              string `json:"meal_time"`                 // 用餐时间
 		TouristsNumber        string `json:"tourists_number"`           // 出行人个数
 	}
-	// MFWTsAddress ts_address
-	MFWTsAddress struct {
+	// TsAddress ts_address
+	TsAddress struct {
 		PickUpAddress string `json:"pick_up_address"` // 取件地址
 		ReturnAddress string `json:"return_address"`  // 还件地址
 	}
-	// MFWAddress address
-	MFWAddress struct {
+	// Address address
+	Address struct {
 		Adress        string `json:"adress"`         // 收货地址
 		ReceiverName  string `json:"receiver_name"`  // 收件人姓名
 		ReceiverPhone string `json:"receiver_phone"` // 收货人电话
 	}
-	// MFWTravelerParam traveler param
-	MFWTravelerParam struct {
-		OrderID string           `json:"order_id"` // 订单号
-		Params  *MFWTravelPeople `json:"params"`   // 出行人信息
+	// TravelerParam traveler param
+	TravelerParam struct {
+		OrderID string        `json:"order_id"` // 订单号
+		Params  *TravelPeople `json:"params"`   // 出行人信息
 	}
 )
 
 // Traveler traveler
 type Traveler struct {
-	OrderID    string            `json:"order_id"`    // 订单号
-	TravelerID int32             `json:"traveler_id"` // 出行人ID
-	Params     *MFWTravelerParam `json:"params"`      // 出行人信息
+	OrderID    string         `json:"order_id"`    // 订单号
+	TravelerID int32          `json:"traveler_id"` // 出行人ID
+	Params     *TravelerParam `json:"params"`      // 出行人信息
 }
 
 // NewTraveler new traveler
@@ -141,7 +141,7 @@ func NewTraveler() *Traveler {
 }
 
 // List get traveler list
-func (t *Traveler) List(orderID string) (*MFWTravelerItem, error) {
+func (t *Traveler) List(orderID string) (*TravelerItem, error) {
 	data, err := json.Marshal(&Traveler{
 		OrderID: orderID,
 	})
@@ -155,7 +155,7 @@ func (t *Traveler) List(orderID string) (*MFWTravelerItem, error) {
 		return nil, err
 	}
 
-	result := MFWTravelerItem{}
+	result := TravelerItem{}
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }

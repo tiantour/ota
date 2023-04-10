@@ -7,13 +7,14 @@ import (
 )
 
 type (
-	// MFWShopList get shop list
-	MFWShopList struct {
-		Total int32          `json:"total"`
-		List  []*MFWShopItem `json:"list"`
+	// ShopList get shop list
+	ShopList struct {
+		Total int32       `json:"total"`
+		List  []*ShopItem `json:"list"`
 	}
-	// MFWShopItem get shop item
-	MFWShopItem struct {
+
+	// ShopItem get shop item
+	ShopItem struct {
 		SalesID       string  `json:"sales_id,omitempty"`        // 产品id
 		SalesName     string  `json:"sales_name,omitempty"`      // 产品名称
 		SalesType     string  `json:"sales_type,omitempty"`      // 品类ID
@@ -31,7 +32,7 @@ type (
 		AvgUIDGmv     float64 `json:"avg_uid_gmv"`               // 客单价：统计周期内，支付订单金额/支付人数
 		AvgOrdGmv     float64 `json:"avg_ord_gmv"`               // 均单价：统计周期内，支付订单金额/支付订单数
 		AvgStockGmv   float64 `json:"avg_stock_gmv"`             // 库存单价：统计周期内，支付订单金额/支付件数
-		ReduceMfw     float64 `json:"reduce_mfw"`                // 马蜂窝优惠金额：统计周期内，支付订单的马蜂窝优惠金额累计（马蜂窝补贴）
+		Reduce        float64 `json:"reduce_"`                   // 马蜂窝优惠金额：统计周期内，支付订单的马蜂窝优惠金额累计（马蜂窝补贴）
 		ReduceSum     float64 `json:"reduce_sum"`                // 优惠金额：统计周期内，支付订单的优惠金额累计
 		ReduceOta     float64 `json:"reduce_ota"`                // 商家优惠金额：统计周期内，支付订单的商家优惠金额累计（商家自补贴）
 		RefundSum     float64 `json:"refund_sum"`                // 退款总额：统计周期内，所有产生退款订单的退款金额累计
@@ -54,7 +55,7 @@ func NewShop() *Shop {
 }
 
 // Product get shop product data
-func (s *Shop) Product(start, end string, types, page, size int32) (*MFWShopList, error) {
+func (s *Shop) Product(start, end string, types, page, size int32) (*ShopList, error) {
 	action := "sales.shop.product.trade.get"
 	data, err := json.Marshal(&Shop{
 		StartTime: start,
@@ -66,17 +67,19 @@ func (s *Shop) Product(start, end string, types, page, size int32) (*MFWShopList
 	if err != nil {
 		return nil, err
 	}
+
 	body, err := mafengwo.NewDeals().Fetch(action, data)
 	if err != nil {
 		return nil, err
 	}
-	result := MFWShopList{}
+
+	result := ShopList{}
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
 
 // Trade get shop trade data
-func (s *Shop) Trade(start, end string, types, page, size int32) (*MFWShopList, error) {
+func (s *Shop) Trade(start, end string, types, page, size int32) (*ShopList, error) {
 	action := "sales.shop.trade.get"
 	data, err := json.Marshal(&Shop{
 		StartTime: start,
@@ -88,11 +91,13 @@ func (s *Shop) Trade(start, end string, types, page, size int32) (*MFWShopList, 
 	if err != nil {
 		return nil, err
 	}
+
 	body, err := mafengwo.NewDeals().Fetch(action, data)
 	if err != nil {
 		return nil, err
 	}
-	result := MFWShopList{}
+
+	result := ShopList{}
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }

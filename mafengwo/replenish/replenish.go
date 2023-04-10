@@ -7,14 +7,14 @@ import (
 )
 
 type (
-	// MFWReplenishList replenish list
-	MFWReplenishList struct {
-		Total int32               `json:"total"` // 数量
-		List  []*MFWReplenishItem `json:"list"`  //
+	// ReplenishList replenish list
+	ReplenishList struct {
+		Total int32            `json:"total"` // 数量
+		List  []*ReplenishItem `json:"list"`  //
 	}
 
-	// MFWReplenishItem replenish item
-	MFWReplenishItem struct {
+	// ReplenishItem replenish item
+	ReplenishItem struct {
 		OrderID     string  `json:"order_id"`     // 旅行商城业务订单号
 		ReplenishID string  `json:"replenish_id"` // 旅行商城业务订单号关联补款单号
 		Status      int32   `json:"status"`       // 补款单状态0-待支付；1-已支付；2-申请退款中；3-部分退款成功；4-全部退款成功；5-已关闭
@@ -42,17 +42,19 @@ func NewReplenish() *Replenish {
 }
 
 // List get replenish list
-func (r *Replenish) List(args *Replenish) (*MFWReplenishList, error) {
+func (r *Replenish) List(args *Replenish) (*ReplenishList, error) {
 	action := "sales.replenish.list.get"
 	data, err := json.Marshal(args)
 	if err != nil {
 		return nil, err
 	}
+
 	body, err := mafengwo.NewDeals().Fetch(action, data)
 	if err != nil {
 		return nil, err
 	}
-	result := MFWReplenishList{}
+
+	result := ReplenishList{}
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
@@ -64,10 +66,12 @@ func (r *Replenish) Create(args *Replenish) (*Replenish, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	body, err := mafengwo.NewDeals().Fetch(action, data)
 	if err != nil {
 		return nil, err
 	}
+
 	result := Replenish{}
 	err = json.Unmarshal(body, &result)
 	return &result, err
@@ -80,10 +84,12 @@ func (r *Replenish) Cancel(args *Replenish) (*Replenish, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	body, err := mafengwo.NewDeals().Fetch(action, data)
 	if err != nil {
 		return nil, err
 	}
+
 	result := Replenish{}
 	err = json.Unmarshal(body, &result)
 	return &result, err

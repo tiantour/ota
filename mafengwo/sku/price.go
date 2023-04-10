@@ -7,14 +7,14 @@ import (
 )
 
 type (
-	// MFWPriceItem price item
-	MFWPriceItem struct {
-		Calendar map[string]map[string]*MFWPriceInfo `json:"calendar"` // 日历库存
-		Stable   map[string]*MFWPriceInfo            `json:"stable"`   // 非日历库存
+	// PriceItem price item
+	PriceItem struct {
+		Calendar map[string]map[string]*PriceInfo `json:"calendar"` // 日历库存
+		Stable   map[string]*PriceInfo            `json:"stable"`   // 非日历库存
 	}
 
-	// MFWPriceInfo price info
-	MFWPriceInfo struct {
+	// PriceInfo price info
+	PriceInfo struct {
 		PriceSettle float64 `json:"price_settle"` // 结算价
 		Remain      int32   `json:"remain"`       // 日历库存余量
 		MinNum      int32   `json:"min_num"`      // 最小购买数
@@ -39,7 +39,7 @@ func NewPrice() *Price {
 }
 
 // Item get sku price item
-func (p *Price) Item(skuID int32) (*MFWPriceItem, error) {
+func (p *Price) Item(skuID int32) (*PriceItem, error) {
 	action := "sales.sku.price.get"
 	data, err := json.Marshal(&Price{
 		SkuID: skuID,
@@ -47,27 +47,31 @@ func (p *Price) Item(skuID int32) (*MFWPriceItem, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	body, err := mafengwo.NewDeals().Fetch(action, data)
 	if err != nil {
 		return nil, err
 	}
-	result := MFWPriceItem{}
+
+	result := PriceItem{}
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
 
 // Update update sku price
-func (p *Price) Update(args *Price) (*MFWPriceItem, error) {
+func (p *Price) Update(args *Price) (*PriceItem, error) {
 	action := "sales.sku.price.update"
 	data, err := json.Marshal(args)
 	if err != nil {
 		return nil, err
 	}
+
 	body, err := mafengwo.NewDeals().Fetch(action, data)
 	if err != nil {
 		return nil, err
 	}
-	result := MFWPriceItem{}
+
+	result := PriceItem{}
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }

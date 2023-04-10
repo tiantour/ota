@@ -7,8 +7,8 @@ import (
 )
 
 type (
-	// MFWMemoItem memo item
-	MFWMemoItem struct {
+	// MemoItem memo item
+	MemoItem struct {
 		ID       int32  `json:"id"`        // 备注id
 		OrderID  string `json:"order_id"`  // 旅行商城业务订单号
 		AdminUID int32  `json:"admin_uid"` // 备注添加人UID
@@ -29,7 +29,7 @@ func NewMemo() *Memo {
 }
 
 // Item get memo item
-func (m *Memo) Item(orderID string) (*MFWMemoItem, error) {
+func (m *Memo) Item(orderID string) (*MemoItem, error) {
 	data, err := json.Marshal(&Memo{
 		OrderID: orderID,
 	})
@@ -43,7 +43,7 @@ func (m *Memo) Item(orderID string) (*MFWMemoItem, error) {
 		return nil, err
 	}
 
-	result := MFWMemoItem{}
+	result := MemoItem{}
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }

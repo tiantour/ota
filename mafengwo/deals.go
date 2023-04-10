@@ -71,24 +71,23 @@ func (d *Deals) Fetch(action string, data []byte) ([]byte, error) {
 			"Content-Type": []string{w.FormDataContentType()},
 		},
 	})
-	fmt.Println(111, resp, err)
 	if err != nil {
 		return nil, err
 	}
 
 	body, err = io.ReadAll(resp.Body)
-	fmt.Println(222, string(body), err)
 	if err != nil {
 		return nil, err
 	}
 
 	base64Data = cryptor.Base64StdDecode(string(body))
-	body = cryptor.AesCbcDecrypt([]byte(base64Data), key)
-	fmt.Println(333, string(body), err)
+	body, err = rsae.NewAES().Decrypt([]byte(base64Data), key, key[:16])
+	if err != nil {
+		return nil, err
+	}
 
 	result := Deals{}
-	err = json.Unmarshal([]byte("{\""+string(body)), &result)
-	fmt.Println(44, string(body), err)
+	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return nil, err
 	}
@@ -100,6 +99,5 @@ func (d *Deals) Fetch(action string, data []byte) ([]byte, error) {
 	if result.ErrNo != 1000 {
 		return nil, errors.New(result.Message)
 	}
-	// return json.Marshal(result.Data)
-	return []byte{}, nil
+	return json.Marshal(result.Data)
 }

@@ -7,45 +7,46 @@ import (
 )
 
 type (
-	// MFWCommentList comment list
-	MFWCommentList struct {
-		List  []*MFWCommentItem `json:"list"`  // 点评信息列表
-		Total int32             `json:"total"` // 点评数量
-	}
-	// MFWCommentItem comment item
-	MFWCommentItem struct {
-		ID        int32           `json:"id "`        // 点评ID
-		OrderID   string          `json:"order_id"`   // 旅行商城订单号
-		UserName  string          `json:"username"`   // 用户昵称
-		UID       int32           `json:"uid"`        // 点评用户的UID
-		UserPhone string          `json:"user_phone"` // 点评用户的手机号
-		Ctime     string          `json:"ctime"`      // 点评首次提交时间
-		Mtime     string          `json:"mtime"`      // 点评最后一次更新时间
-		Star      int32           `json:"star"`       // 1，2 表示差评 3表示中评 4，5表示好评
-		SubStar   []*MFWSubStar   `json:"sub_star"`   // 维度评分信息
-		StarTags  []*MFWStarTags  `json:"star_tags"`  // 点评关联的标签
-		Content   string          `json:"content"`    // 点评内容
-		Reply     string          `json:"reply"`      // 商家关于点评的回复
-		SalesID   int32           `json:"sales_id"`   // 马蜂窝产品id，产品唯一标识
-		SalesName string          `json:"sales_name"` // 产品名称
-		ImgCount  int32           `json:"img_count"`  // 用户在点评中上传的照片数量
-		ImageInfo []*MFWImageInfo `json:"image_info"` // 	用户在点评中上传的图片信息
-		Status    int32           `json:"status"`     // 点评状态 0是待审核 1是审核通过
+	// CommentList comment list
+	CommentList struct {
+		List  []*CommentItem `json:"list"`  // 点评信息列表
+		Total int32          `json:"total"` // 点评数量
 	}
 
-	// MFWSubStar sub star
-	MFWSubStar struct {
+	// CommentItem comment item
+	CommentItem struct {
+		ID        int32        `json:"id "`        // 点评ID
+		OrderID   string       `json:"order_id"`   // 旅行商城订单号
+		UserName  string       `json:"username"`   // 用户昵称
+		UID       int32        `json:"uid"`        // 点评用户的UID
+		UserPhone string       `json:"user_phone"` // 点评用户的手机号
+		Ctime     string       `json:"ctime"`      // 点评首次提交时间
+		Mtime     string       `json:"mtime"`      // 点评最后一次更新时间
+		Star      int32        `json:"star"`       // 1，2 表示差评 3表示中评 4，5表示好评
+		SubStar   []*SubStar   `json:"sub_star"`   // 维度评分信息
+		StarTags  []*StarTags  `json:"star_tags"`  // 点评关联的标签
+		Content   string       `json:"content"`    // 点评内容
+		Reply     string       `json:"reply"`      // 商家关于点评的回复
+		SalesID   int32        `json:"sales_id"`   // 马蜂窝产品id，产品唯一标识
+		SalesName string       `json:"sales_name"` // 产品名称
+		ImgCount  int32        `json:"img_count"`  // 用户在点评中上传的照片数量
+		ImageInfo []*ImageInfo `json:"image_info"` // 	用户在点评中上传的图片信息
+		Status    int32        `json:"status"`     // 点评状态 0是待审核 1是审核通过
+	}
+
+	// SubStar sub star
+	SubStar struct {
 		Alias string `json:"alias"` // 点评维度名称
 		Star  int32  `json:"star"`  // 维度评价得分 1，2 表示差评 3表示中评 4，5表示好评
 	}
 
-	// MFWStarTags star tag
-	MFWStarTags struct {
+	// StarTags star tag
+	StarTags struct {
 		Name string `json:"name"` // 点评标签名称
 	}
 
-	// MFWImageInfo image info
-	MFWImageInfo struct {
+	// ImageInfo image info
+	ImageInfo struct {
 		ImgSrc string `json:"img_src"` // 点评照片链接
 	}
 )
@@ -71,7 +72,7 @@ func NewComment() *Comment {
 }
 
 // List get comment list
-func (c *Comment) List(args *Comment) (*MFWCommentList, error) {
+func (c *Comment) List(args *Comment) (*CommentList, error) {
 	data, err := json.Marshal(args)
 	if err != nil {
 		return nil, err
@@ -83,7 +84,7 @@ func (c *Comment) List(args *Comment) (*MFWCommentList, error) {
 		return nil, err
 	}
 
-	result := MFWCommentList{}
+	result := CommentList{}
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }

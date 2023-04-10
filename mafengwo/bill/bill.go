@@ -7,13 +7,14 @@ import (
 )
 
 type (
-	// MFWBillList bill list
-	MFWBillList struct {
-		TotalResults int32          `json:"total_results"` //
-		List         []*MFWBillItem `json:"list"`          //
+	// BillList bill list
+	BillList struct {
+		TotalResults int32       `json:"total_results"` //
+		List         []*BillItem `json:"list"`          //
 	}
-	// MFWBillItem bill item
-	MFWBillItem struct {
+
+	// BillItem bill item
+	BillItem struct {
 		DetailID           int32   `json:"detail_id"`            // 交易号
 		OrderID            string  `json:"order_id"`             // 旅行商城业务订单号
 		SalesAmount        float64 `json:"sales_amount"`         // 销售金额
@@ -46,17 +47,19 @@ func NewBill() *Bill {
 }
 
 // Transaction transaction
-func (b *Bill) Transaction(args *Bill) (*MFWBillList, error) {
+func (b *Bill) Transaction(args *Bill) (*BillList, error) {
 	action := "sales.bills.transaction.get"
 	data, err := json.Marshal(args)
 	if err != nil {
 		return nil, err
 	}
+
 	body, err := mafengwo.NewDeals().Fetch(action, data)
 	if err != nil {
 		return nil, err
 	}
-	result := MFWBillList{}
+
+	result := BillList{}
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }

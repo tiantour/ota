@@ -7,14 +7,14 @@ import (
 )
 
 type (
-	// MFWRefundList refund list
-	MFWRefundList struct {
-		List  []*MFWRefundItem `json:"list"`  // 马蜂窝自由行补款单退款信息
-		Total int32            `json:"total"` // 补款退款单总个数
+	// RefundList refund list
+	RefundList struct {
+		List  []*RefundItem `json:"list"`  // 马蜂窝自由行补款单退款信息
+		Total int32         `json:"total"` // 补款退款单总个数
 	}
 
-	// MFWRefundItem refund item
-	MFWRefundItem struct {
+	// RefundItem refund item
+	RefundItem struct {
 		ReplenishID  string  `json:"replenish_id"`  // 旅行商城业务订单号关联补款单号
 		RefundFlag   int32   `json:"refund_flag"`   // 退款单状态1-退款中2-退款完成3-退款驳回4-未申请
 		TotalPrice   float64 `json:"total_price"`   // 补款单原始金额
@@ -38,17 +38,19 @@ func NewRefund() *Refund {
 }
 
 // List get refund list
-func (r *Refund) List(args *Refund) (*MFWRefundList, error) {
+func (r *Refund) List(args *Refund) (*RefundList, error) {
 	action := "sales.replenish.refund.get"
 	data, err := json.Marshal(args)
 	if err != nil {
 		return nil, err
 	}
+
 	body, err := mafengwo.NewDeals().Fetch(action, data)
 	if err != nil {
 		return nil, err
 	}
-	result := MFWRefundList{}
+
+	result := RefundList{}
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
@@ -60,10 +62,12 @@ func (r *Refund) Create(args *Refund) (*Refund, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	body, err := mafengwo.NewDeals().Fetch(action, data)
 	if err != nil {
 		return nil, err
 	}
+
 	result := Refund{}
 	err = json.Unmarshal(body, &result)
 	return &result, err
@@ -76,10 +80,12 @@ func (r *Refund) Cancel(args *Refund) (*Refund, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	body, err := mafengwo.NewDeals().Fetch(action, data)
 	if err != nil {
 		return nil, err
 	}
+
 	result := Refund{}
 	err = json.Unmarshal(body, &result)
 	return &result, err

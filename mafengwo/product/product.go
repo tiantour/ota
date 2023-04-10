@@ -7,23 +7,23 @@ import (
 )
 
 type (
-	// MFWProductList product list
-	MFWProductList struct {
-		List  []*MFWProductItem `json:"list"`
-		Total int32             `json:"total"`
+	// ProductList product list
+	ProductList struct {
+		List  []*ProductItem `json:"list"`
+		Total int32          `json:"total"`
 	}
 
-	// MFWProductItem product item
-	MFWProductItem struct {
-		SalesID       int32     `json:"sales_id"`        // 产品id
-		SalesName     string    `json:"sales_name"`      // 一日游	产品名称
-		SalesType     int32     `json:"sales_type"`      // 品类id（二级品类）
-		SalesTypeName string    `json:"sales_type_name"` // 景区/场馆	品类名称（二级品类）
-		SalesStatus   int32     `json:"sales_status"`    // 产品状态，主要包括：0-未上线，1-已上线，2-人工下线，3-系统下线，4-审核下线；
-		SkuList       []*MFWSku `json:"sku_list"`        // 产品关联的sku信息
+	// ProductItem product item
+	ProductItem struct {
+		SalesID       int32  `json:"sales_id"`        // 产品id
+		SalesName     string `json:"sales_name"`      // 一日游	产品名称
+		SalesType     int32  `json:"sales_type"`      // 品类id（二级品类）
+		SalesTypeName string `json:"sales_type_name"` // 景区/场馆	品类名称（二级品类）
+		SalesStatus   int32  `json:"sales_status"`    // 产品状态，主要包括：0-未上线，1-已上线，2-人工下线，3-系统下线，4-审核下线；
+		SkuList       []*Sku `json:"sku_list"`        // 产品关联的sku信息
 	}
-	// MFWSku sku
-	MFWSku struct {
+	// Sku sku
+	Sku struct {
 		SkuID          int32  `json:"sku_id"`           // 马蜂窝SKU ID，SKU唯一标识
 		OtaSkuID       string `json:"ota_sku_id"`       // 商家设置的SKU外部编码
 		SkuName        string `json:"sku_name"`         // 门票 成人票	SKU名称
@@ -47,7 +47,7 @@ func NewProduct() *Product {
 }
 
 // List get product list
-func (p *Product) List(page, size int32) (*MFWProductList, error) {
+func (p *Product) List(page, size int32) (*ProductList, error) {
 	data, err := json.Marshal(&Product{
 		PageNo:   page,
 		PageSize: size,
@@ -62,13 +62,13 @@ func (p *Product) List(page, size int32) (*MFWProductList, error) {
 		return nil, err
 	}
 
-	result := MFWProductList{}
+	result := ProductList{}
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
 
 // Item get product item
-func (p *Product) Item(salesID int32) (*MFWProductItem, error) {
+func (p *Product) Item(salesID int32) (*ProductItem, error) {
 	data, err := json.Marshal(&Product{
 		SalesID: salesID,
 	})
@@ -82,7 +82,7 @@ func (p *Product) Item(salesID int32) (*MFWProductItem, error) {
 		return nil, err
 	}
 
-	result := MFWProductItem{}
+	result := ProductItem{}
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }

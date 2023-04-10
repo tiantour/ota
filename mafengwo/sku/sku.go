@@ -7,8 +7,8 @@ import (
 )
 
 type (
-	// MFWSkuItem sku item
-	MFWSkuItem struct {
+	// SkuItem sku item
+	SkuItem struct {
 		SkuID          int32  `json:"sku_id"`           // 马蜂窝sku_id
 		OtaSkuID       string `json:"ota_sku_id"`       // 商家设置的SKU外部编码
 		SalesID        int32  `json:"sales_id"`         // 马蜂窝产品id，产品唯一标识
@@ -37,7 +37,7 @@ func NewSku() *Sku {
 }
 
 // Item get sku item
-func (s *Sku) Item(skuID int32) (*MFWSkuItem, error) {
+func (s *Sku) Item(skuID int32) (*SkuItem, error) {
 	action := "sales.sku.info.get"
 	data, err := json.Marshal(&Sku{
 		SkuID: skuID,
@@ -45,33 +45,37 @@ func (s *Sku) Item(skuID int32) (*MFWSkuItem, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	body, err := mafengwo.NewDeals().Fetch(action, data)
 	if err != nil {
 		return nil, err
 	}
-	result := MFWSkuItem{}
+
+	result := SkuItem{}
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
 
 // Time set sku time
-func (s *Sku) Time(args *Sku) (*MFWSkuItem, error) {
+func (s *Sku) Time(args *Sku) (*SkuItem, error) {
 	action := "sales.sku.bookingtime.update"
 	data, err := json.Marshal(args)
 	if err != nil {
 		return nil, err
 	}
+
 	body, err := mafengwo.NewDeals().Fetch(action, data)
 	if err != nil {
 		return nil, err
 	}
-	result := MFWSkuItem{}
+
+	result := SkuItem{}
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
 
 // OnLine set sku online
-func (s *Sku) OnLine(skuID int32) (*MFWSkuItem, error) {
+func (s *Sku) OnLine(skuID int32) (*SkuItem, error) {
 	action := "sales.sku.online"
 	data, err := json.Marshal(&Sku{
 		SkuID: skuID,
@@ -79,17 +83,19 @@ func (s *Sku) OnLine(skuID int32) (*MFWSkuItem, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	body, err := mafengwo.NewDeals().Fetch(action, data)
 	if err != nil {
 		return nil, err
 	}
-	result := MFWSkuItem{}
+
+	result := SkuItem{}
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
 
 // OffLine set sku offline
-func (s *Sku) OffLine(skuID int32) (*MFWSkuItem, error) {
+func (s *Sku) OffLine(skuID int32) (*SkuItem, error) {
 	action := "sales.sku.offline"
 	data, err := json.Marshal(&Sku{
 		SkuID: skuID,
@@ -97,17 +103,19 @@ func (s *Sku) OffLine(skuID int32) (*MFWSkuItem, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	body, err := mafengwo.NewDeals().Fetch(action, data)
 	if err != nil {
 		return nil, err
 	}
-	result := MFWSkuItem{}
+
+	result := SkuItem{}
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
 
 // Delete set sku delete
-func (s *Sku) Delete(skuID int32) (*MFWSkuItem, error) {
+func (s *Sku) Delete(skuID int32) (*SkuItem, error) {
 	action := "sales.sku.delete"
 	data, err := json.Marshal(&Sku{
 		SkuID: skuID,
@@ -115,11 +123,13 @@ func (s *Sku) Delete(skuID int32) (*MFWSkuItem, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	body, err := mafengwo.NewDeals().Fetch(action, data)
 	if err != nil {
 		return nil, err
 	}
-	result := MFWSkuItem{}
+
+	result := SkuItem{}
 	err = json.Unmarshal(body, &result)
 	return &result, err
 }
